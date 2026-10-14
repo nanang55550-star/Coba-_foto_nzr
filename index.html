@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galeri Berjalan</title>
+    <title>Galeri Kanvas Foto</title>
     <style>
         * {
             margin: 0;
@@ -11,100 +11,108 @@
             box-sizing: border-box;
         }
 
-        body {
-            /* Latar belakang gelap agar foto lebih menonjol */
-            background-color: #0f1115; 
-            min-height: 100vh;
+        html, body {
+            background-color: #0d0f12; /* Warna latar belakang gelap */
+            /* Mengizinkan scroll halus ke segala arah (atas, bawah, kiri, kanan) */
+            overflow: auto;
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        html:active, body:active {
+            cursor: grabbing;
+        }
+
+        /* Ruang kanvas yang sangat luas agar bisa digeser bebas */
+        .canvas {
+            min-width: 250vw;
+            min-height: 250vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow-x: hidden;
+            padding: 100px;
         }
 
-        /* Wadah utama / viewport */
-        .marquee-container {
+        /* Area susunan foto (Grid acak tanpa garis tabel) */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 160px); /* 5 kolom */
+            grid-auto-rows: 150px;
+            grid-auto-flow: dense; /* Mengisi ruang kosong secara otomatis */
+            gap: 16px; /* Jarak antar foto */
+            place-content: center;
+        }
+
+        /* Pengaturan foto */
+        .photo-grid img {
             width: 100%;
-            overflow: hidden;
-            display: flex;
-            position: relative;
-            padding: 20px 0;
-        }
-
-        /* Efek bayangan halus (fade) di sisi kiri & kanan layar */
-        .marquee-container::before,
-        .marquee-container::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            width: 100px;
             height: 100%;
-            z-index: 2;
-            pointer-events: none;
-        }
-        .marquee-container::before {
-            left: 0;
-            background: linear-gradient(to right, #0f1115, transparent);
-        }
-        .marquee-container::after {
-            right: 0;
-            background: linear-gradient(to left, #0f1115, transparent);
-        }
-
-        /* Rel tempat foto berjalan */
-        .marquee-track {
-            display: flex;
-            gap: 20px; /* Jarak antar foto */
-            width: max-content;
-            animation: scroll 35s linear infinite; /* Kecepatan gerakan */
-        }
-
-        /* Menghentikan gerakan sementara saat kursor diarahkan ke foto */
-        .marquee-container:hover .marquee-track {
-            animation-play-state: paused;
-        }
-
-        /* Pengaturan ukuran foto */
-        .marquee-track img {
-            height: 260px;          /* Tinggi foto (bisa disesuaikan) */
-            width: auto;            /* Lebar otomatis mengikuti proporsi foto */
-            border-radius: 12px;    /* Sudut foto membulat */
             object-fit: cover;
-            user-select: none;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-            transition: transform 0.3s ease;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, z-index 0.3s ease;
         }
 
-        /* Animasi sedikit membesar saat foto disentuh kursor */
-        .marquee-track img:hover {
-            transform: scale(1.04);
+        /* Efek acak (Random): beberapa foto melebar, memanjang, atau miring natural */
+        .photo-grid img:nth-child(odd) {
+            transform: rotate(-1.5deg);
+        }
+        .photo-grid img:nth-child(even) {
+            transform: rotate(1.5deg);
+        }
+        .photo-grid img:nth-child(3n) {
+            grid-column: span 2; /* Foto landscape / melebar */
+            transform: rotate(0.8deg);
+        }
+        .photo-grid img:nth-child(4n) {
+            grid-row: span 2; /* Foto portrait / memanjang */
+            transform: rotate(-1.2deg);
+        }
+        .photo-grid img:nth-child(7n) {
+            grid-column: span 2;
+            grid-row: span 2; /* Foto ukuran besar */
         }
 
-        /* Logika animasi dari kanan ke kiri secara seamless */
-        @keyframes scroll {
-            0% {
-                transform: translateX(0);
-            }
-            100% {
-                /* Bergerak sejauh 50% (karena track otomatis diduplikasi via JS) */
-                transform: translateX(-50%);
-            }
+        /* Efek saat foto disentuh/diklik */
+        .photo-grid img:hover {
+            transform: scale(1.08) rotate(0deg);
+            z-index: 10;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.8);
         }
     </style>
 </head>
 <body>
 
-    <div class="marquee-container">
-        <div class="marquee-track" id="imageTrack">
-            <!-- Ganti dengan nama file foto di repositori GitHub Anda -->
-            <img src="d065327c30b8211f2a0f80878ec31b83.jpg" alt="">
-                        <!-- Tambahkan tag <img> lagi di sini sampai sesuai jumlah fotomu -->
+    <div class="canvas" id="canvas">
+        <div class="photo-grid">
+            <!-- 
+                DAFTAR FOTO: 
+                Foto yang paling tengah di bawah ini akan jadi titik tengah layar.
+                Tambahkan foto sebanyak-banyaknya di sini!
+            -->
+            <img src="d065327c30b8211f2a0f80878ec31b83.jpg" alt="foto">
+            <img src="d065327c30b8211f2a0f80878ec31b83.jpg" alt="foto">
+            <img src="d065327c30b8211f2a0f80878ec31b83.jpg" alt="foto">
+            <img src="d065327c30b8211f2a0f80878ec31b83.jpg" alt="foto">
+            <img src="d065327c30b8211f2a0f80878ec31b83.jpg" alt="foto">
+            <img src="d065327c30b8211f2a0f80878ec31b83.jpg" alt="foto">
+            <img src="d065327c30b8211f2a0f80878ec31b83.jpg" alt="foto">
+            <img src="d065327c30b8211f2a0f80878ec31b83.jpg" alt="foto">
+            <img src="d065327c30b8211f2a0f80878ec31b83.jpg" alt="foto">
+            <!-- Tambahkan terus tag <img> lainnya di sini -->
         </div>
     </div>
 
     <script>
-        // Otomatis menggandakan isi track agar loop berjalan mulus tanpa jeda/patah
-        const track = document.getElementById('imageTrack');
-        track.innerHTML += track.innerHTML;
+        // Otomatis menempatkan posisi layar tepat di tengah-tengah kanvas saat halaman dibuka
+        window.addEventListener('DOMContentLoaded', () => {
+            const centerX = (document.documentElement.scrollWidth - window.innerWidth) / 2;
+            const centerY = (document.documentElement.scrollHeight - window.innerHeight) / 2;
+            window.scrollTo(centerX, centerY);
+        });
     </script>
 
 </body>
