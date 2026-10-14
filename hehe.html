@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeri Berjalan</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            /* Latar belakang gelap agar foto lebih menonjol */
+            background-color: #0f1115; 
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+        }
+
+        /* Wadah utama / viewport */
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            position: relative;
+            padding: 20px 0;
+        }
+
+        /* Efek bayangan halus (fade) di sisi kiri & kanan layar */
+        .marquee-container::before,
+        .marquee-container::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            width: 100px;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .marquee-container::before {
+            left: 0;
+            background: linear-gradient(to right, #0f1115, transparent);
+        }
+        .marquee-container::after {
+            right: 0;
+            background: linear-gradient(to left, #0f1115, transparent);
+        }
+
+        /* Rel tempat foto berjalan */
+        .marquee-track {
+            display: flex;
+            gap: 20px; /* Jarak antar foto */
+            width: max-content;
+            animation: scroll 35s linear infinite; /* Kecepatan gerakan */
+        }
+
+        /* Menghentikan gerakan sementara saat kursor diarahkan ke foto */
+        .marquee-container:hover .marquee-track {
+            animation-play-state: paused;
+        }
+
+        /* Pengaturan ukuran foto */
+        .marquee-track img {
+            height: 260px;          /* Tinggi foto (bisa disesuaikan) */
+            width: auto;            /* Lebar otomatis mengikuti proporsi foto */
+            border-radius: 12px;    /* Sudut foto membulat */
+            object-fit: cover;
+            user-select: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease;
+        }
+
+        /* Animasi sedikit membesar saat foto disentuh kursor */
+        .marquee-track img:hover {
+            transform: scale(1.04);
+        }
+
+        /* Logika animasi dari kanan ke kiri secara seamless */
+        @keyframes scroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                /* Bergerak sejauh 50% (karena track otomatis diduplikasi via JS) */
+                transform: translateX(-50%);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="marquee-container">
+        <div class="marquee-track" id="imageTrack">
+            <!-- Ganti dengan nama file foto di repositori GitHub Anda -->
+            <img src="images/foto1.jpg" alt="">
+            <img src="images/foto2.jpg" alt="">
+            <img src="images/foto3.jpg" alt="">
+            <img src="images/foto4.jpg" alt="">
+            <img src="images/foto5.jpg" alt="">
+            <img src="images/foto6.jpg" alt="">
+            <img src="images/foto7.jpg" alt="">
+            <img src="images/foto8.jpg" alt="">
+            <img src="images/foto9.jpg" alt="">
+            <img src="images/foto10.jpg" alt="">
+            <!-- Tambahkan tag <img> lagi di sini sampai sesuai jumlah fotomu -->
+        </div>
+    </div>
+
+    <script>
+        // Otomatis menggandakan isi track agar loop berjalan mulus tanpa jeda/patah
+        const track = document.getElementById('imageTrack');
+        track.innerHTML += track.innerHTML;
+    </script>
+
+</body>
+</html>
