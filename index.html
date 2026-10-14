@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galeri Kanvas Foto</title>
+    <title>Galeri Kanvas Foto Asli</title>
     <style>
         * {
             margin: 0;
@@ -12,8 +12,8 @@
         }
 
         html, body {
-            background-color: #0d0f12; /* Warna latar belakang gelap */
-            /* Mengizinkan scroll halus ke segala arah (atas, bawah, kiri, kanan) */
+            background-color: #0b0c0e; /* Warna latar belakang gelap */
+            /* Mengizinkan swipe bebas ke atas, bawah, kiri, kanan */
             overflow: auto;
             width: 100%;
             height: 100%;
@@ -26,72 +26,68 @@
             cursor: grabbing;
         }
 
-        /* Ruang kanvas yang sangat luas agar bisa digeser bebas */
+        /* Kanvas luas yang mengelilingi galeri */
         .canvas {
-            min-width: 250vw;
-            min-height: 250vh;
+            min-width: 220vw;
+            min-height: 220vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 100px;
+            padding: 120px;
         }
 
-        /* Area susunan foto (Grid acak tanpa garis tabel) */
-        .photo-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 160px); /* 5 kolom */
-            grid-auto-rows: 150px;
-            grid-auto-flow: dense; /* Mengisi ruang kosong secara otomatis */
+        /* Tempat berkumpulnya foto: menyebar ke kiri-kanan & atas-bawah dari tengah */
+        .photo-cluster {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
             gap: 16px; /* Jarak antar foto */
-            place-content: center;
+            max-width: 1100px; /* Batas lebar agar foto melipat ke atas & bawah */
         }
 
-        /* Pengaturan foto */
-        .photo-grid img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 12px;
+        /* KUNCI: Foto mempertahankan rasio aslinya 100% tanpa dipotong */
+        .photo-cluster img {
+            height: 180px;            /* Tinggi dasar */
+            width: auto;              /* Lebar otomatis menyesuaikan bentuk asli foto */
+            border-radius: 10px;      /* Sudut foto sedikit melengkung rapi */
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease, z-index 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: block;
         }
 
-        /* Efek acak (Random): beberapa foto melebar, memanjang, atau miring natural */
-        .photo-grid img:nth-child(odd) {
+        /* Variasi tinggi dan sedikit kemiringan acak agar tampak estetik */
+        .photo-cluster img:nth-child(odd) {
             transform: rotate(-1.5deg);
         }
-        .photo-grid img:nth-child(even) {
+        .photo-cluster img:nth-child(even) {
             transform: rotate(1.5deg);
         }
-        .photo-grid img:nth-child(3n) {
-            grid-column: span 2; /* Foto landscape / melebar */
+        .photo-cluster img:nth-child(3n) {
+            height: 210px; /* Beberapa foto dibuat sedikit lebih besar */
             transform: rotate(0.8deg);
         }
-        .photo-grid img:nth-child(4n) {
-            grid-row: span 2; /* Foto portrait / memanjang */
-            transform: rotate(-1.2deg);
-        }
-        .photo-grid img:nth-child(7n) {
-            grid-column: span 2;
-            grid-row: span 2; /* Foto ukuran besar */
+        .photo-cluster img:nth-child(4n) {
+            height: 160px; /* Beberapa foto dibuat sedikit lebih kecil */
+            transform: rotate(-1deg);
         }
 
-        /* Efek saat foto disentuh/diklik */
-        .photo-grid img:hover {
+        /* Efek foto saat disentuh atau diarahkan jari/kursor */
+        .photo-cluster img:hover {
             transform: scale(1.08) rotate(0deg);
             z-index: 10;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.85);
         }
     </style>
 </head>
 <body>
 
-    <div class="canvas" id="canvas">
-        <div class="photo-grid">
+    <div class="canvas">
+        <div class="photo-cluster">
             <!-- 
                 DAFTAR FOTO: 
-                Foto yang paling tengah di bawah ini akan jadi titik tengah layar.
-                Tambahkan foto sebanyak-banyaknya di sini!
+                Masukkan semua foto Anda di sini. 
+                Foto tidak akan terpotong (landscape tetap lebar, portrait tetap tegak).
             -->
             <img src="d065327c30b8211f2a0f80878ec31b83.jpg" alt="foto">
             <img src="d065327c30b8211f2a0f80878ec31b83.jpg" alt="foto">
@@ -102,13 +98,14 @@
             <img src="d065327c30b8211f2a0f80878ec31b83.jpg" alt="foto">
             <img src="d065327c30b8211f2a0f80878ec31b83.jpg" alt="foto">
             <img src="d065327c30b8211f2a0f80878ec31b83.jpg" alt="foto">
-            <!-- Tambahkan terus tag <img> lainnya di sini -->
+            <!-- Tambahkan terus tag <img> foto-foto Anda lainnya di sini -->
         </div>
     </div>
 
     <script>
-        // Otomatis menempatkan posisi layar tepat di tengah-tengah kanvas saat halaman dibuka
-        window.addEventListener('DOMContentLoaded', () => {
+        // Memastikan semua foto selesai dimuat terlebih dahulu,
+        // lalu otomatis menggeser layar tepat ke bagian tengah galeri foto.
+        window.addEventListener('load', () => {
             const centerX = (document.documentElement.scrollWidth - window.innerWidth) / 2;
             const centerY = (document.documentElement.scrollHeight - window.innerHeight) / 2;
             window.scrollTo(centerX, centerY);
